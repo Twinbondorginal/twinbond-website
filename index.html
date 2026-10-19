@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Twinbond Dry Fruit Honey</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#fffaf0;color:#38230d}
+header{background:#713b0b;color:white;text-align:center;padding:22px 12px}
+header h1{margin:0;font-size:30px}
+header p{margin:8px 0 0}
+.hero{text-align:center;padding:30px 15px;background:#ffedbd}
+.hero h2{font-size:28px;margin:0 0 10px}
+.hero p{font-size:17px}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:16px;padding:20px;max-width:1000px;margin:auto}
+.card{background:white;border:1px solid #ead7b3;border-radius:12px;text-align:center;padding:16px;box-shadow:0 2px 8px #00000010}
+.jar{font-size:55px}
+.card h3{margin:8px 0}
+.price{font-size:21px;font-weight:bold;color:#8a4c08}
+button{background:#168447;color:white;border:0;border-radius:7px;padding:11px 14px;cursor:pointer;font-size:15px}
+button:hover{opacity:.9}
+.cart{max-width:700px;margin:15px auto 30px;padding:20px;background:white;border-radius:12px;border:1px solid #ead7b3}
+.cart h2{text-align:center}
+.cartrow{display:flex;justify-content:space-between;gap:10px;align-items:center;border-bottom:1px solid #eee;padding:10px 0}
+.cartrow button{padding:5px 10px}
+.total{font-size:22px;font-weight:bold;text-align:right;margin:18px 0}
+label{display:block;margin-top:12px;font-weight:bold}
+input,textarea,select{width:100%;padding:12px;margin-top:5px;border:1px solid #ccc;border-radius:6px;font-size:16px}
+.order{width:100%;margin-top:18px;font-size:17px;background:#168447}
+footer{text-align:center;padding:22px;background:#713b0b;color:white}
+footer a{color:#ffe8a6}
+.small{font-size:13px;color:#66533d}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🍯 Twinbond</h1>
+<p>Dry Fruit Honey</p>
+<p>Pure health in every spoonful!</p>
+</header>
+
+<section class="hero">
+<h2>Welcome to Twinbond Dry Fruit Honey</h2>
+<p>A delicious treat for you and your family.</p>
+<p><strong>Choose your favourite pack below!</strong></p>
+</section>
+
+<section class="products" id="products"></section>
+
+<section class="cart">
+<h2>🛒 Your Shopping Cart</h2>
+<div id="cartItems">Your cart is empty.</div>
+<div class="total">Total: ₹<span id="total">0</span></div>
+
+<h2>Delivery Details</h2>
+<form id="checkout">
+<label>Customer Name *</label>
+<input id="name" required placeholder="Enter your full name">
+
+<label>Mobile Number *</label>
+<input id="phone" required type="tel" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit mobile number">
+
+<label>Delivery Address *</label>
+<textarea id="address" required rows="3" placeholder="House number, street, area"></textarea>
+
+<label>PIN Code *</label>
+<input id="pin" required inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="6-digit PIN code">
+
+<label>Payment Preference</label>
+<select id="payment">
+<option>Cash on Delivery</option>
+<option>Online Payment - Confirm with Seller</option>
+</select>
+
+<button class="order" type="submit">Order on WhatsApp</button>
+<p class="small">Your order details will be sent to Twinbond through WhatsApp. Your order is not confirmed until the seller confirms it.</p>
+</form>
+</section>
+
+<footer>
+<p><strong>Twinbond Dry Fruit Honey</strong></p>
+<p>Pure health in every spoonful!</p>
+<p>Orders & Enquiries: 8778744256</p>
+<p><a href="https://wa.me/918778744256">Contact us on WhatsApp</a></p>
+</footer>
+
+<script>
+const products = [
+ {name:"Dry Fruit Honey",weight:"20 g",price:25},
+ {name:"Dry Fruit Honey",weight:"50 g",price:65},
+ {name:"Dry Fruit Honey",weight:"100 g",price:120},
+ {name:"Dry Fruit Honey",weight:"250 g",price:260},
+ {name:"Dry Fruit Honey",weight:"500 g",price:499},
+ {name:"Dry Fruit Honey",weight:"1 kg",price:999},
+ {name:"Dry Fruit Honey",weight:"2 kg",price:1899}
+];
+
+const cart = {};
+
+document.getElementById("products").innerHTML = products.map((p,i)=>`
+<div class="card">
+<div class="jar">🍯</div>
+<h3>${p.name}</h3>
+<p>Pack size: <strong>${p.weight}</strong></p>
+<p class="price">₹${p.price.toLocaleString("en-IN")}</p>
+<button onclick="addToCart(${i})">Add to Cart</button>
+</div>`).join("");
+
+function addToCart(i){
+ cart[i]=(cart[i]||0)+1;
+ renderCart();
+}
+
+function changeQty(i,amount){
+ cart[i]=(cart[i]||0)+amount;
+ if(cart[i]<=0) delete cart[i];
+ renderCart();
+}
+
+function renderCart(){
+ const ids=Object.keys(cart);
+ const box=document.getElementById("cartItems");
+
+ if(!ids.length){
+   box.textContent="Your cart is empty.";
+ }else{
+   box.innerHTML=ids.map(id=>{
+     const p=products[id];
+     return `<div class="cartrow">
+       <span>${p.weight} — ₹${p.price.toLocaleString("en-IN")} × ${cart[id]}</span>
+       <span>
+       <button type="button" onclick="changeQty(${id},-1)">−</button>
+       <button type="button" onclick="changeQty(${id},1)">+</button>
+       </span>
+     </div>`;
+   }).join("");
+ }
+
+ const total=ids.reduce((sum,id)=>sum+products[id].price*cart[id],0);
+ document.getElementById("total").textContent=total.toLocaleString("en-IN");
+}
+
+document.getElementById("checkout").addEventListener("submit",function(e){
+ e.preventDefault();
+
+ if(!Object.keys(cart).length){
+   alert("Please add at least one product to your cart.");
+   return;
+ }
+
+ const name=document.getElementById("name").value.trim();
+ const phone=document.getElementById("phone").value.trim();
+ const address=document.getElementById("address").value.trim();
+ const pin=document.getElementById("pin").value.trim();
+ const payment=document.getElementById("payment").value;
+
+ let message="*NEW ORDER - TWINBOND DRY FRUIT HONEY*%0A";
+ message+="%0AName: "+encodeURIComponent(name);
+ message+="%0ACustomer Mobile: "+encodeURIComponent(phone);
+ message+="%0AAddress: "+encodeURIComponent(address);
+ message+="%0APIN Code: "+encodeURIComponent(pin);
+ message+="%0A%0A*Products:*";
+
+ Object.keys(cart).forEach(id=>{
+   const p=products[id];
+   message+="%0A"+encodeURIComponent(p.weight+" - ₹"+p.price+" x "+cart[id]+" = ₹"+(p.price*cart[id]));
+ });
+
+ message+="%0A%0A*Total: ₹"+document.getElementById("total").textContent+"*";
+ message+="%0APayment preference: "+encodeURIComponent(payment);
+ message+="%0A%0APlease confirm my order.";
+
+ window.open("https://wa.me/918778744256?text="+message,"_blank");
+});
+</script>
+</body>
+</html>
